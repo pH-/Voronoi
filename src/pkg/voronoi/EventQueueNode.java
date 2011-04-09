@@ -6,13 +6,13 @@ public class EventQueueNode {
 	EventQueueNode leftChild = null;
 	EventQueueNode rightChild= null;
 	EventQueueNode parent = null;
-	BeachLineNode  assocArc=null;
+	BeachLineLeafNode  assocArc=null;
 	
-	public void setAssocArc(BeachLineNode associatedArc)
+	public void setAssocArc(BeachLineLeafNode associatedArc)
 	{
 		assocArc = associatedArc;
 	}
-	public BeachLineNode getAssocArc()
+	public BeachLineLeafNode getAssocArc()
 	{
 		return assocArc;
 	}

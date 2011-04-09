@@ -75,13 +75,20 @@ public class EventQueue {
 			{
 				newNode.setLeftChild(nodeToDelete.getLeftChild());
 			}
+			newNode.setParent(nodeToDelete.getParent());
+			
+			if(nodeToDelete == nodeToDelete.getParent().getLeftChild())
+				newNode.getParent().setLeftChild(newNode);
+			else
+				newNode.getParent().setRightChild(newNode);
+			
+			if(rootNode == nodeToDelete)
+				rootNode = newNode;
 		}
-		newNode.setParent(nodeToDelete.getParent());
-		
-		if(nodeToDelete == nodeToDelete.getParent().getLeftChild())
-			newNode.getParent().setLeftChild(newNode);
 		else
-			newNode.getParent().setRightChild(newNode);
+		{
+			
+		}
 	}
 	public EventQueueNode findTreeMin(EventQueueNode root)
 	{

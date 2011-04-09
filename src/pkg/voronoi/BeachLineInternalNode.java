@@ -1,19 +1,20 @@
 package pkg.voronoi;
 
-public class BeachLineNode {
+public class BeachLineInternalNode {
 	
-	Coordinates focusOfArc=null;						//value present for leaf node only
 	int 		id;
 	int			neighbour1Id;
 	int			neighbour2Id;
+	BeachLineInternalNode leftChild;
+	BeachLineInternalNode rightChild;
+	BeachLineInternalNode parent;
+	
+	BeachLineLeafNode     leftLeaf;
+	BeachLineLeafNode	  rightLeaf;
 
 	public void setId(int idNumber)
 	{
 		id=idNumber;
-	}
-	public void setFocus(double x, double y)
-	{
-		focusOfArc.setXYcoords(x, y);
 	}
 	public void setNeighbours(int nId1,int nId2)
 	{
@@ -32,12 +33,5 @@ public class BeachLineNode {
 	{
 		return id;
 	}
-	public double getFocusX()
-	{
-		return focusOfArc.getXcoord();
-	}
-	public double getFocusY()
-	{
-		return focusOfArc.getYcoord();
-	}
+	
 }
