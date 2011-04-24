@@ -7,6 +7,7 @@ public class EventQueueNode {
 	EventQueueNode rightChild= null;
 	EventQueueNode parent = null;
 	BeachLineLeafNode  assocArc=null;
+	BeachLineInternalNode  arcToKill;
 	
 	public void setAssocArc(BeachLineLeafNode associatedArc)
 	{

@@ -2,36 +2,81 @@ package pkg.voronoi;
 
 public class BeachLineInternalNode {
 	
-	int 		id;
-	int			neighbour1Id;
-	int			neighbour2Id;
+	int 		id=-1;
+	Coordinates upperArcFocus;
+	Coordinates	lowerArcFocus;
+	int 		color=1;
 	BeachLineInternalNode leftChild;
 	BeachLineInternalNode rightChild;
 	BeachLineInternalNode parent;
+	HalfEdge 			  newHe;
 	
 	BeachLineLeafNode     leftLeaf;
 	BeachLineLeafNode	  rightLeaf;
 
-	public void setId(int idNumber)
+	public void setId()
 	{
-		id=idNumber;
+		id=GlobalVariable.getBeachLineId();
 	}
-	public void setNeighbours(int nId1,int nId2)
+	public void setTuple(Coordinates upperFocus,Coordinates lowerFocus)
 	{
-		neighbour1Id=nId1;
-		neighbour2Id=nId2;
+		upperArcFocus=upperFocus;
+		lowerArcFocus=lowerFocus;
 	}
-	public int getNeighbour1()
+	public Coordinates getUpperFocus()
 	{
-		return neighbour1Id;
+		return upperArcFocus;
 	}
-	public int getNeighbour2()
+	public Coordinates getLowerFocus()
 	{
-		return neighbour2Id;
+		return lowerArcFocus;
 	}
 	public int getId()
 	{
 		return id;
+	}
+	
+	public BeachLineInternalNode getParent() {
+		return parent;
+	}
+	public void setParent(BeachLineInternalNode parent) {
+		this.parent = parent;
+	}
+	
+	public BeachLineInternalNode getRightChild() {
+		return rightChild;
+	}
+	public void setRightChild(BeachLineInternalNode rightChild) {
+		this.rightChild = rightChild;
+	}
+	
+	public BeachLineInternalNode getLeftChild() {
+		return leftChild;
+	}
+	public void setLeftChild(BeachLineInternalNode leftChild) {
+		this.leftChild = leftChild;
+	}
+	
+	
+	public BeachLineLeafNode getRightLeaf() {
+		return rightLeaf;
+	}
+	
+	public void setRightLeaf(BeachLineLeafNode rightLeaf) {
+		this.rightLeaf = rightLeaf;
+	}
+	
+	public BeachLineLeafNode getLeftLeaf() {
+		return leftLeaf;
+	}
+	public void setLeftLeaf(BeachLineLeafNode leftLeaf) {
+		this.leftLeaf = leftLeaf;
+	}
+	
+	public Coordinates getBrkPoint(Coordinates focus1, Coordinates focus2, double Xdirectrix)
+	{
+		Coordinates brkPoint = new Coordinates();
+		return brkPoint;
 	}
 	
 }
