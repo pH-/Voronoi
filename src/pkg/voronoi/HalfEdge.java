@@ -3,8 +3,18 @@ package pkg.voronoi;
 public class HalfEdge {
 	
 	Vertex sourceVertex, targetVertex;
+	Cell   parentCell;
 	HalfEdge next, prev;
 	
+	
+	public Cell getParentCell() {
+		return parentCell;
+	}
+
+	public void setParentCell(Cell parentCell) {
+		this.parentCell = parentCell;
+	}
+
 	public void setSourceVertex(Vertex srcVertex)
 	{
 		sourceVertex = srcVertex;

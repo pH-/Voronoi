@@ -7,8 +7,30 @@ public class EventQueueNode {
 	EventQueueNode rightChild= null;
 	EventQueueNode parent = null;
 	BeachLineLeafNode  assocArc=null;
-	BeachLineInternalNode  arcToKill;
+	BeachLineLeafNode  arcToKill;
 	
+	public EventQueueNode(Coordinates coord,BeachLineLeafNode arcToKill)
+	{
+		this.setXY(coord.getXcoord(), coord.getYcoord());
+		this.arcToKill = arcToKill;
+	}
+	
+	public Coordinates getXycoord() {
+		return xycoord;
+	}
+
+	public void setXycoord(Coordinates xycoord) {
+		this.xycoord = xycoord;
+	}
+
+	public BeachLineLeafNode getArcToKill() {
+		return arcToKill;
+	}
+
+	public void setArcToKill(BeachLineLeafNode arcToKill) {
+		this.arcToKill = arcToKill;
+	}
+
 	public void setAssocArc(BeachLineLeafNode associatedArc)
 	{
 		assocArc = associatedArc;
@@ -17,7 +39,7 @@ public class EventQueueNode {
 	{
 		return assocArc;
 	}
-	public void setXY(float x, float y)
+	public void setXY(double x, double y)
 	{
 		xycoord.setXYcoords(x, y);
 	}

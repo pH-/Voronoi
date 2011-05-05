@@ -3,6 +3,15 @@ package pkg.voronoi;
 public class EventQueue {
 	EventQueueNode rootNode=null;
 	
+	
+	public EventQueueNode getRootNode() {
+		return rootNode;
+	}
+
+	public void setRootNode(EventQueueNode rootNode) {
+		this.rootNode = rootNode;
+	}
+
 	public void insertSiteEvent(EventQueueNode newNode)
 	{
 		if(rootNode==null)
@@ -98,6 +107,11 @@ public class EventQueue {
 		}
 		else
 			return findTreeMin(root.getLeftChild());
+	}
+	
+	public EventQueueNode findTreeMin()
+	{
+		return findTreeMin(rootNode);
 	}
 	
 	public EventQueueNode findTreeMax(EventQueueNode root)
