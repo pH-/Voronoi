@@ -7,6 +7,11 @@ public class Vertex {
 	Coordinates vCoord;
 	Vertex   next, prev;
 	
+	public Vertex(Coordinates coord,HalfEdge assocHe)
+	{
+		vCoord.setXYcoords(coord.getXcoord(), coord.getYcoord());
+		emitHalfEdge=assocHe;
+	}
 	public int getVertexId() {
 		return VertexId;
 	}

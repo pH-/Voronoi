@@ -27,7 +27,7 @@ public class BeachLine {
 			BeachLineInternalNode newTuple2 = new BeachLineInternalNode();
 			BeachLineLeafNode newArc2 = new BeachLineLeafNode();
 			HalfEdge halfEdge = new HalfEdge();
-			halfEdge.setSourceVertex(srcVertex)
+			//halfEdge.setSourceVertex(srcVertex)
 			VoronoiMesh.heInsert(halfEdge);
 			root.getLeftLeaf().cloneit(newArc2);
 			newTuple1.setId();
@@ -36,10 +36,14 @@ public class BeachLine {
 			newTuple1.setRightChild(newTuple2);
 			newTuple1.setLeftLeaf(root.getLeftLeaf());
 			newTuple1.getLeftLeaf().setParent(newTuple1);
+			newTuple1.setAssocHe(halfEdge);
+			newTuple1.setBrkPtFlg(0);
 			
 			root = newTuple1;
 			newTuple2.setLeftLeaf(newArc);
 			newTuple2.setRightLeaf(newArc2);
+			newTuple2.setAssocHe(halfEdge);
+			newTuple2.setBrkPtFlg(1);
 			
 			newArc.setParent(newTuple2);
 			newArc2.setParent(newTuple2);
@@ -59,8 +63,7 @@ public class BeachLine {
 	
 	private void recursiveTreeInsert(BeachLineInternalNode root, BeachLineLeafNode newArc)
 	{
-		////// insert half edge.......
-		Coordinates breakPoint = root.getBrkPoint(root.getLowerFocus(), root.getUpperFocus(),newArc.getFocusX());
+		Coordinates breakPoint = root.getBrkPoint(root.getLowerFocus(), root.getUpperFocus(),newArc.getFocusX(),root.getBrkPtFlg());
 		if(breakPoint.getYcoord() >= newArc.getFocusY())
 		{
 			if(root.getLeftChild()!=null)
@@ -101,11 +104,18 @@ public class BeachLine {
 			oldArc.getParent().setRightChild(newTuple1);
 			oldArc.getParent().setRightLeaf(null);
 		}
+		HalfEdge halfEdge = new HalfEdge();
+		VoronoiMesh.heInsert(halfEdge);
 		
 		newTuple1.setRightChild(newTuple2);
 		newTuple1.setLeftLeaf(oldArc);
+		newTuple1.setBrkPtFlg(0);
+		newTuple1.setAssocHe(halfEdge);
+		
+		newTuple2.setAssocHe(halfEdge);
 		newTuple2.setLeftLeaf(newArc);
 		newTuple2.setRightLeaf(newArc2); 
+		newTuple2.setBrkPtFlg(1);
 		
 		newArc2.setParent(newTuple2);
 		newArc.setParent(newTuple2);
@@ -117,6 +127,72 @@ public class BeachLine {
 		upperF.setXYcoords(newTuple2.getLeftLeaf().getFocusX(), newTuple2.getLeftLeaf().getFocusY());
 		lowerF.setXYcoords(newTuple2.getRightLeaf().getFocusX(), newTuple2.getRightLeaf().getFocusY());
 		newTuple2.setTuple(upperF, lowerF);
+	}
+	
+	public void deleteArc(BeachLineLeafNode deadArc)
+	{
+		if(deadArc.getParent().getParent().getRightChild()==deadArc.getParent())
+		{
+			if(deadArc.getParent().getLeftChild()!=null)
+			{
+				deadArc.getParent().getParent().setRightChild(deadArc.getParent().getLeftChild());
+				deadArc.getParent().getLeftChild().setParent(deadArc.getParent().getParent());
+				deadArc.getParent().setParent(null);
+				deadArc.getParent().setLeftChild(null);
+			}
+			else if(deadArc.getParent().getLeftLeaf()!=null)
+			{
+				deadArc.getParent().getParent().setRightLeaf(deadArc.getParent().getLeftLeaf());
+				deadArc.getParent().getLeftLeaf().setParent(deadArc.getParent().getParent());
+				deadArc.getParent().setParent(null);
+				deadArc.getParent().setLeftChild(null);
+			}
+			else if(deadArc.getParent().getRightChild()!=null)
+			{
+				deadArc.getParent().getParent().setRightChild(deadArc.getParent().getRightChild());
+				deadArc.getParent().getRightChild().setParent(deadArc.getParent().getParent());
+				deadArc.getParent().setParent(null);
+				deadArc.getParent().setLeftChild(null);
+			}
+			else if(deadArc.getParent().getRightLeaf()!=null)
+			{
+				deadArc.getParent().getParent().setRightLeaf(deadArc.getParent().getRightLeaf());
+				deadArc.getParent().getRightLeaf().setParent(deadArc.getParent().getParent());
+				deadArc.getParent().setParent(null);
+				deadArc.getParent().setLeftChild(null);
+			}
+		}
+		else
+		{
+			if(deadArc.getParent().getLeftChild()!=null)
+			{
+				deadArc.getParent().getParent().setLeftChild(deadArc.getParent().getLeftChild());
+				deadArc.getParent().getLeftChild().setParent(deadArc.getParent().getParent());
+				deadArc.getParent().setParent(null);
+				deadArc.getParent().setLeftChild(null);
+			}
+			else if(deadArc.getParent().getLeftLeaf()!=null)
+			{
+				deadArc.getParent().getParent().setLeftLeaf(deadArc.getParent().getLeftLeaf());
+				deadArc.getParent().getLeftLeaf().setParent(deadArc.getParent().getParent());
+				deadArc.getParent().setParent(null);
+				deadArc.getParent().setLeftChild(null);
+			}
+			else if(deadArc.getParent().getRightChild()!=null)
+			{
+				deadArc.getParent().getParent().setLeftChild(deadArc.getParent().getRightChild());
+				deadArc.getParent().getRightChild().setParent(deadArc.getParent().getParent());
+				deadArc.getParent().setParent(null);
+				deadArc.getParent().setLeftChild(null);
+			}
+			else if(deadArc.getParent().getRightLeaf()!=null)
+			{
+				deadArc.getParent().getParent().setLeftLeaf(deadArc.getParent().getRightLeaf());
+				deadArc.getParent().getRightLeaf().setParent(deadArc.getParent().getParent());
+				deadArc.getParent().setParent(null);
+				deadArc.getParent().setLeftChild(null);
+			}
+		}
 	}
 	
 	public void leftRotate(BeachLineInternalNode xnode)

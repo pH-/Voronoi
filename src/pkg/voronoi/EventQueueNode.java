@@ -2,12 +2,13 @@ package pkg.voronoi;
 
 public class EventQueueNode {
 	Coordinates xycoord;						// site event or tip of circle (event)
+	double radius=0;
 	int 		id;
 	EventQueueNode leftChild = null;
 	EventQueueNode rightChild= null;
 	EventQueueNode parent = null;
-	BeachLineLeafNode  assocArc=null;
-	BeachLineLeafNode  arcToKill;
+	//BeachLineLeafNode  assocArc=null;
+	BeachLineLeafNode  arcToKill=null;;
 	
 	public EventQueueNode(Coordinates coord,BeachLineLeafNode arcToKill)
 	{
@@ -15,6 +16,21 @@ public class EventQueueNode {
 		this.arcToKill = arcToKill;
 	}
 	
+	public EventQueueNode(Coordinates coord,double radius,BeachLineLeafNode arcToKill)
+	{
+		this.setXY(coord.getXcoord(), coord.getYcoord());
+		this.arcToKill = arcToKill;
+		this.radius=radius;
+	}
+	
+	public double getRadius() {
+		return radius;
+	}
+
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+
 	public Coordinates getXycoord() {
 		return xycoord;
 	}
@@ -30,7 +46,7 @@ public class EventQueueNode {
 	public void setArcToKill(BeachLineLeafNode arcToKill) {
 		this.arcToKill = arcToKill;
 	}
-
+/*
 	public void setAssocArc(BeachLineLeafNode associatedArc)
 	{
 		assocArc = associatedArc;
@@ -38,7 +54,7 @@ public class EventQueueNode {
 	public BeachLineLeafNode getAssocArc()
 	{
 		return assocArc;
-	}
+	}*/
 	public void setXY(double x, double y)
 	{
 		xycoord.setXYcoords(x, y);

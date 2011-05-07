@@ -5,11 +5,12 @@ public class BeachLineInternalNode {
 	int 		id=-1;
 	Coordinates upperArcFocus;
 	Coordinates	lowerArcFocus;
+	int			brkPtFlg;
 	int 		color=1;
 	BeachLineInternalNode leftChild;
 	BeachLineInternalNode rightChild;
 	BeachLineInternalNode parent;
-	HalfEdge 			  newHe;
+	HalfEdge 			  assocHe;
 	
 	BeachLineLeafNode     leftLeaf;
 	BeachLineLeafNode	  rightLeaf;
@@ -73,7 +74,7 @@ public class BeachLineInternalNode {
 		this.leftLeaf = leftLeaf;
 	}
 	
-	public Coordinates[] getBrkPoint(Coordinates focus1, Coordinates focus2, double Xdirectrix)
+	public Coordinates getBrkPoint(Coordinates focus1, Coordinates focus2, double Xdirectrix,int whichBrkPt)
 	{
 		Coordinates[] brkPoint = new Coordinates[2];
 		double k1,k2,k3,a,b,c,a1,b1,a2,b2,a3,brkx1,brkx2,brky1,brky2;
@@ -90,10 +91,40 @@ public class BeachLineInternalNode {
 		brkx2=(-b-Math.sqrt(Math.pow(b, 2)-4*a*c))/2*a;
 		brky1=Math.sqrt(Math.pow(a3-brkx1, 2) - Math.pow(brkx1-a1,2)) +b1;
 		brky2=Math.sqrt(Math.pow(a3-brkx2, 2) - Math.pow(brkx2-a1,2)) +b1;
-
+		
 		brkPoint[0].setXYcoords(brkx1, brky1);
 		brkPoint[1].setXYcoords(brkx2, brky2);
-		return brkPoint;
+		
+		if(whichBrkPt==0)
+		{
+			if(brky1<brky2)	
+				return brkPoint[0];
+			else
+				return brkPoint[1];
+		}
+		else
+		{
+			if(brky1>brky2)	
+				return brkPoint[0];
+			else
+				return brkPoint[1];
+		}
+	}
+	
+	public HalfEdge getAssocHe() {
+		return assocHe;
+	}
+	
+	public void setAssocHe(HalfEdge assocHe) {
+		this.assocHe = assocHe;
+	}
+	
+	public int getBrkPtFlg() {
+		return brkPtFlg;
+	}
+	
+	public void setBrkPtFlg(int brkPtFlg) {
+		this.brkPtFlg = brkPtFlg;
 	}
 	
 }
