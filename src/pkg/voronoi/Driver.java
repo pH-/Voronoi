@@ -61,13 +61,18 @@ public class Driver {
 	{
 		EventQueueNode hoaxEvent;
 		Vertex vertex;
-		hoaxEvent = currEvent.getArcToKill().getRightSibling(statusTree).getKillerCircleEvent();
+		BeachLineLeafNode leftNeighbour;
+		BeachLineLeafNode rightNeighbour;
+		leftNeighbour = currEvent.getArcToKill().getLeftSibling(statusTree);
+		rightNeighbour = currEvent.getArcToKill().getRightSibling(statusTree);
+		
+		hoaxEvent = rightNeighbour.getKillerCircleEvent();
 		if(hoaxEvent!=null)
 		{
 			hoaxEvent.setArcToKill(null);
 			eventQ.deleteNode(hoaxEvent);
 		}
-		hoaxEvent = currEvent.getArcToKill().getLeftSibling(statusTree).getKillerCircleEvent();
+		hoaxEvent = leftNeighbour.getKillerCircleEvent();
 		
 		if(hoaxEvent!=null)
 		{
@@ -75,27 +80,28 @@ public class Driver {
 			eventQ.deleteNode(hoaxEvent);
 		}
 		Coordinates vertexCoords = new Coordinates(currEvent.getX()-currEvent.getRadius(), currEvent.getY());
-		vertex= new Vertex(vertexCoords,currEvent.getArcToKill().getLeftSibling(statusTree).getParent().getAssocHe());
-		currEvent.getArcToKill().getLeftSibling(statusTree).setKillerCircleEvent(null);
-		currEvent.getArcToKill().getRightSibling(statusTree).setKillerCircleEvent(null);
-		HalfEdge temphePtr = currEvent.getArcToKill().getRightSibling(statusTree).getParent().getAssocHe();
+		vertex= new Vertex(vertexCoords,leftNeighbour.getParent().getAssocHe());
+		leftNeighbour.setKillerCircleEvent(null);
+		rightNeighbour.setKillerCircleEvent(null);
+		HalfEdge temphePtr = rightNeighbour.getParent().getAssocHe();
 		if(temphePtr.getTargetVertex()==null)
 			temphePtr.setTargetVertex(vertex);
 		else
 			temphePtr.setSourceVertex(vertex);
-		temphePtr = currEvent.getArcToKill().getLeftSibling(statusTree).getParent().getAssocHe();
+		temphePtr = leftNeighbour.getParent().getAssocHe();
 		if(temphePtr.getTargetVertex()==null)
 			temphePtr.setTargetVertex(vertex);
 		else
 			temphePtr.setSourceVertex(vertex);
 		
 		HalfEdge newHe = new HalfEdge();
-		currEvent.getArcToKill().getLeftSibling(statusTree).getParent().setAssocHe(newHe);
-		currEvent.getArcToKill().getRightSibling(statusTree).getParent().setAssocHe(newHe);
+		leftNeighbour.getParent().setAssocHe(newHe);
+		rightNeighbour.getParent().setAssocHe(newHe);
 		
 		statusTree.deleteArc(currEvent.getArcToKill());
 		newHe.setSourceVertex(vertex);
-		VoronoiMesh.heInsert(newHe);	
+		VoronoiMesh.heInsert(newHe);
+		getNewCircleEvents(leftNeighbour, rightNeighbour, eventQ, statusTree);
 	}
 	private static void checkForCircleKiller(BeachLineLeafNode newArc,BeachLine tree,EventQueue eventQ)
 	{	
@@ -153,8 +159,35 @@ public class Driver {
 			return null;
 	}
 	
-	/*private static void createHalfEdge()
+	private static void getNewCircleEvents(BeachLineLeafNode leftArc, BeachLineLeafNode rightArc, EventQueue eventQ, BeachLine statusTree)
 	{
+		BeachLineLeafNode leftMost = leftArc.getLeftSibling(statusTree);
+		BeachLineLeafNode rightMost = rightArc.getRightSibling(statusTree);
+		Coordinates point1, point2, point3, point4;
+		EventQueueNode newCircleEvent1=null, newCircleEvent2=null;
+		point1=point2=point3=point4=null;
+		point1 = new Coordinates(leftArc.getFocusX(),leftArc.getFocusY());
+		point2 = new Coordinates(rightArc.getFocusX(),rightArc.getFocusY());
+		if(rightMost!=null)
+			point3 = new Coordinates(rightMost.getFocusX(),rightMost.getFocusY());
+		if(leftMost!=null)
+			point4 = new Coordinates(leftMost.getFocusX(),leftMost.getFocusY());
+		if(point3!=null)
+			newCircleEvent1 = getCircleEvent(point1, point2, point3);
+		if(point4!=null)
+			newCircleEvent2 = getCircleEvent(point1, point2, point4);
 		
-	}*/
+		if(newCircleEvent1!=null)
+		{
+			newCircleEvent1.setArcToKill(rightArc);
+			rightArc.setKillerCircleEvent(newCircleEvent1);
+			eventQ.insertSiteEvent(newCircleEvent1);
+		}
+		if(newCircleEvent2!=null)
+		{
+			newCircleEvent2.setArcToKill(leftArc);
+			leftArc.setKillerCircleEvent(newCircleEvent2);
+			eventQ.insertSiteEvent(newCircleEvent2);
+		}
+	}
 }
