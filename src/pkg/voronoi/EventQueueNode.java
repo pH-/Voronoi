@@ -1,14 +1,15 @@
 package pkg.voronoi;
 
 public class EventQueueNode {
-	Coordinates xycoord;						// site event or tip of circle (event)
+	Coordinates xycoord= new Coordinates();						// site event or tip of circle (event)
 	double radius=0;
 	int 		id;
 	EventQueueNode leftChild = null;
 	EventQueueNode rightChild= null;
 	EventQueueNode parent = null;
 	//BeachLineLeafNode  assocArc=null;
-	BeachLineLeafNode  arcToKill=null;;
+	BeachLineLeafNode  arcToKill=null;
+	EventQueue tree=null;
 	
 	public EventQueueNode(Coordinates coord,BeachLineLeafNode arcToKill)
 	{
@@ -116,6 +117,22 @@ public class EventQueueNode {
 			return true;
 		else
 			return false;
+	}
+	
+	public EventQueueNode getRootOfTree()
+	{
+		if(this.getParent()==null)
+			return this;
+		else
+			return this.getParent().getRootOfTree();
+	}
+
+	public EventQueue getTree() {
+		return tree;
+	}
+
+	public void setTree(EventQueue tree) {
+		this.tree = tree;
 	}
 }
 

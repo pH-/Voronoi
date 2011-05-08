@@ -25,6 +25,8 @@ public class BeachLine {
 		{
 			BeachLineInternalNode newTuple1 = new BeachLineInternalNode();
 			BeachLineInternalNode newTuple2 = new BeachLineInternalNode();
+			//newTuple1.setParent(oldArc.getParent());
+			newTuple2.setParent(newTuple1);
 			BeachLineLeafNode newArc2 = new BeachLineLeafNode();
 			HalfEdge halfEdge = new HalfEdge();
 			//halfEdge.setSourceVertex(srcVertex)
@@ -47,11 +49,11 @@ public class BeachLine {
 			
 			newArc.setParent(newTuple2);
 			newArc2.setParent(newTuple2);
-			Coordinates upperF = new Coordinates(newTuple1.getLeftLeaf().getFocusX(),newTuple1.getLeftLeaf().getFocusY());
-			Coordinates lowerF = new Coordinates(newTuple2.getLeftLeaf().getFocusX(),newTuple2.getLeftLeaf().getFocusY());
+			Coordinates lowerF = new Coordinates(newTuple1.getLeftLeaf().getFocusX(),newTuple1.getLeftLeaf().getFocusY());
+			Coordinates upperF = new Coordinates(newTuple2.getLeftLeaf().getFocusX(),newTuple2.getLeftLeaf().getFocusY());
 			newTuple1.setTuple(upperF, lowerF);
-			upperF.setXYcoords(newTuple2.getLeftLeaf().getFocusX(), newTuple2.getLeftLeaf().getFocusY());
-			lowerF.setXYcoords(newTuple2.getRightLeaf().getFocusX(), newTuple2.getRightLeaf().getFocusY());
+			lowerF.setXYcoords(newTuple2.getLeftLeaf().getFocusX(), newTuple2.getLeftLeaf().getFocusY());
+			upperF.setXYcoords(newTuple2.getRightLeaf().getFocusX(), newTuple2.getRightLeaf().getFocusY());
 			newTuple2.setTuple(upperF, lowerF);
 		}
 		else
@@ -84,12 +86,16 @@ public class BeachLine {
 	{
 		BeachLineInternalNode newTuple1 = new BeachLineInternalNode();
 		BeachLineInternalNode newTuple2 = new BeachLineInternalNode();
+		newTuple1.setParent(oldArc.getParent());
+		newTuple2.setParent(newTuple1);
 		BeachLineLeafNode newArc2 = new BeachLineLeafNode();
 		oldArc.cloneit(newArc2);
 		newTuple1.setId();
 		newTuple2.setId();
 		if(oldArc.getKillerCircleEvent()!=null)
 		{
+			EventQueueNode root = oldArc.getKillerCircleEvent().getRootOfTree();
+			root.getTree().deleteNode(oldArc.getKillerCircleEvent());
 			oldArc.getKillerCircleEvent().setArcToKill(null);
 			oldArc.setKillerCircleEvent(null);
 		}
@@ -121,76 +127,114 @@ public class BeachLine {
 		newArc.setParent(newTuple2);
 		oldArc.setParent(newTuple1);
 		
-		Coordinates upperF = new Coordinates(newTuple1.getLeftLeaf().getFocusX(),newTuple1.getLeftLeaf().getFocusY());
-		Coordinates lowerF = new Coordinates(newTuple2.getLeftLeaf().getFocusX(),newTuple2.getLeftLeaf().getFocusY());
+		Coordinates lowerF = new Coordinates(newTuple1.getLeftLeaf().getFocusX(),newTuple1.getLeftLeaf().getFocusY());
+		Coordinates upperF = new Coordinates(newTuple2.getLeftLeaf().getFocusX(),newTuple2.getLeftLeaf().getFocusY());
 		newTuple1.setTuple(upperF, lowerF);
-		upperF.setXYcoords(newTuple2.getLeftLeaf().getFocusX(), newTuple2.getLeftLeaf().getFocusY());
-		lowerF.setXYcoords(newTuple2.getRightLeaf().getFocusX(), newTuple2.getRightLeaf().getFocusY());
+		lowerF.setXYcoords(newTuple2.getLeftLeaf().getFocusX(), newTuple2.getLeftLeaf().getFocusY());
+		upperF.setXYcoords(newTuple2.getRightLeaf().getFocusX(), newTuple2.getRightLeaf().getFocusY());
 		newTuple2.setTuple(upperF, lowerF);
 	}
 	
 	public void deleteArc(BeachLineLeafNode deadArc)
 	{
-		if(deadArc.getParent().getParent().getRightChild()==deadArc.getParent())
+		if(deadArc.getParent().getParent()==null)
 		{
-			if(deadArc.getParent().getLeftChild()!=null)
+			if(deadArc.getParent().getLeftLeaf()==deadArc)
 			{
-				deadArc.getParent().getParent().setRightChild(deadArc.getParent().getLeftChild());
-				deadArc.getParent().getLeftChild().setParent(deadArc.getParent().getParent());
-				deadArc.getParent().setParent(null);
-				deadArc.getParent().setLeftChild(null);
+				if(deadArc.getParent().getRightChild()!=null)
+				{
+					root = deadArc.getParent().getRightChild();
+					deadArc.getParent().getRightChild().setParent(null);
+					deadArc.getParent().setParent(null);
+				}
+				else
+				{
+					BeachLineInternalNode dummyNode = new BeachLineInternalNode();
+					root = dummyNode;
+					dummyNode.setLeftLeaf(deadArc.getParent().getRightLeaf());
+					deadArc.getParent().setParent(null);
+				}
 			}
-			else if(deadArc.getParent().getLeftLeaf()!=null)
+			else
 			{
-				deadArc.getParent().getParent().setRightLeaf(deadArc.getParent().getLeftLeaf());
-				deadArc.getParent().getLeftLeaf().setParent(deadArc.getParent().getParent());
-				deadArc.getParent().setParent(null);
-				deadArc.getParent().setLeftChild(null);
+				if(deadArc.getParent().getLeftChild()!=null)
+				{
+					root = deadArc.getParent().getLeftChild();
+					deadArc.getParent().getLeftChild().setParent(null);
+					deadArc.getParent().setParent(null);
+				}
+				else
+					root.setId(-1);
 			}
-			else if(deadArc.getParent().getRightChild()!=null)
+		}
+		else if(deadArc.getParent().getParent().getRightChild()==deadArc.getParent())
+		{
+			if(deadArc.getParent().getLeftLeaf()==deadArc)
 			{
-				deadArc.getParent().getParent().setRightChild(deadArc.getParent().getRightChild());
-				deadArc.getParent().getRightChild().setParent(deadArc.getParent().getParent());
-				deadArc.getParent().setParent(null);
-				deadArc.getParent().setLeftChild(null);
+				if(deadArc.getParent().getRightChild()==null)
+				{
+					deadArc.getParent().getParent().setRightLeaf(deadArc.getParent().getRightLeaf());
+					deadArc.getParent().getRightLeaf().setParent(deadArc.getParent().getParent());
+					deadArc.getParent().getParent().setRightChild(null);
+					deadArc.getParent().setParent(null);
+				}
+				else
+				{
+					deadArc.getParent().getParent().setRightChild(deadArc.getParent().getRightChild());
+					deadArc.getParent().getRightChild().setParent(deadArc.getParent().getParent());
+					deadArc.getParent().setParent(null);
+				}
 			}
-			else if(deadArc.getParent().getRightLeaf()!=null)
+			else
 			{
-				deadArc.getParent().getParent().setRightLeaf(deadArc.getParent().getRightLeaf());
-				deadArc.getParent().getRightLeaf().setParent(deadArc.getParent().getParent());
-				deadArc.getParent().setParent(null);
-				deadArc.getParent().setLeftChild(null);
+				if(deadArc.getParent().getLeftChild()==null)
+				{
+					deadArc.getParent().getParent().setRightLeaf(deadArc.getParent().getLeftLeaf());
+					deadArc.getParent().getLeftLeaf().setParent(deadArc.getParent().getParent());
+					deadArc.getParent().getParent().setRightChild(null);
+					deadArc.getParent().setParent(null);
+				}
+				else
+				{
+					deadArc.getParent().getParent().setRightChild(deadArc.getParent().getLeftChild());
+					deadArc.getParent().getLeftChild().setParent(deadArc.getParent().getParent());
+					deadArc.getParent().setParent(null);
+				}
 			}
 		}
 		else
 		{
-			if(deadArc.getParent().getLeftChild()!=null)
+			if(deadArc.getParent().getLeftLeaf()==deadArc)
 			{
-				deadArc.getParent().getParent().setLeftChild(deadArc.getParent().getLeftChild());
-				deadArc.getParent().getLeftChild().setParent(deadArc.getParent().getParent());
-				deadArc.getParent().setParent(null);
-				deadArc.getParent().setLeftChild(null);
+				if(deadArc.getParent().getRightChild()==null)
+				{
+					deadArc.getParent().getParent().setLeftLeaf(deadArc.getParent().getRightLeaf());
+					deadArc.getParent().getRightLeaf().setParent(deadArc.getParent().getParent());
+					deadArc.getParent().getParent().setLeftChild(null);
+					deadArc.getParent().setParent(null);
+				}
+				else
+				{
+					deadArc.getParent().getParent().setLeftChild(deadArc.getParent().getRightChild());
+					deadArc.getParent().getRightChild().setParent(deadArc.getParent().getParent());
+					deadArc.getParent().setParent(null);
+				}
 			}
-			else if(deadArc.getParent().getLeftLeaf()!=null)
+			else
 			{
-				deadArc.getParent().getParent().setLeftLeaf(deadArc.getParent().getLeftLeaf());
-				deadArc.getParent().getLeftLeaf().setParent(deadArc.getParent().getParent());
-				deadArc.getParent().setParent(null);
-				deadArc.getParent().setLeftChild(null);
-			}
-			else if(deadArc.getParent().getRightChild()!=null)
-			{
-				deadArc.getParent().getParent().setLeftChild(deadArc.getParent().getRightChild());
-				deadArc.getParent().getRightChild().setParent(deadArc.getParent().getParent());
-				deadArc.getParent().setParent(null);
-				deadArc.getParent().setLeftChild(null);
-			}
-			else if(deadArc.getParent().getRightLeaf()!=null)
-			{
-				deadArc.getParent().getParent().setLeftLeaf(deadArc.getParent().getRightLeaf());
-				deadArc.getParent().getRightLeaf().setParent(deadArc.getParent().getParent());
-				deadArc.getParent().setParent(null);
-				deadArc.getParent().setLeftChild(null);
+				if(deadArc.getParent().getLeftChild()==null)
+				{
+					deadArc.getParent().getParent().setLeftLeaf(deadArc.getParent().getLeftLeaf());
+					deadArc.getParent().getLeftLeaf().setParent(deadArc.getParent().getParent());
+					deadArc.getParent().getParent().setLeftChild(null);
+					deadArc.getParent().setParent(null);
+				}
+				else
+				{
+					deadArc.getParent().getParent().setLeftChild(deadArc.getParent().getLeftChild());
+					deadArc.getParent().getLeftChild().setParent(deadArc.getParent().getParent());
+					deadArc.getParent().setParent(null);
+				}
 			}
 		}
 	}
@@ -238,6 +282,8 @@ public class BeachLine {
 
 	public BeachLineLeafNode getTreemin(BeachLineInternalNode root)
 	{
+		if(root==null)
+			return null;
 		if(root.getLeftChild()==null && root.getLeftLeaf()!=null)
 			return root.getLeftLeaf();
 		else
@@ -246,6 +292,8 @@ public class BeachLine {
 	
 	public BeachLineLeafNode getTreemax(BeachLineInternalNode root)
 	{
+		if(root==null)
+			return null;
 		if(root.getRightChild()==null && root.getRightLeaf()!=null)
 			return root.getRightLeaf();
 		else
@@ -270,7 +318,7 @@ public class BeachLine {
 	
 	public BeachLineInternalNode findGrandParentSuccessor(BeachLineInternalNode parent)
 	{
-		if(parent == null)
+		if(parent.getParent()==null)
 			return null;
 		if(parent == parent.getParent().getLeftChild())
 			return parent.getParent();
@@ -280,12 +328,34 @@ public class BeachLine {
 	
 	public BeachLineInternalNode findGrandParentPredecessor(BeachLineInternalNode parent)
 	{
-		if(parent==null)
+		if(parent.getParent()==null)
 			return null;
 		if(parent == parent.getParent().getRightChild())
 			return parent.getParent();
 		else
 			return findGrandParentPredecessor(parent.getParent());
+	}
+	
+	public void setHalfEdges(double directrixPos)
+	{
+		//BeachLineInternalNode rootOfTree = root;
+		while(root.getId()!=-1)
+		{
+			BeachLineLeafNode obsoleteArc = getTreemin(root);
+			BeachLineInternalNode nextBrk = obsoleteArc.getParent();
+			Coordinates breakPoint = nextBrk.getBrkPoint(nextBrk.getLowerFocus(), nextBrk.getUpperFocus(),directrixPos,nextBrk.getBrkPtFlg());
+			if(nextBrk.getAssocHe().getSourceVertex()==null)
+			{
+				Vertex newVertex = new Vertex(breakPoint,nextBrk.getAssocHe());
+				nextBrk.getAssocHe().setSourceVertex(newVertex);
+			}
+			else if(nextBrk.getAssocHe().getTargetVertex()==null)
+			{
+				Vertex newVertex = new Vertex(breakPoint,nextBrk.getAssocHe());
+				nextBrk.getAssocHe().setTargetVertex(newVertex);
+			}
+			this.deleteArc(obsoleteArc);
+		}
 	}
 	
 	public int getCount()

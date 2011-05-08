@@ -4,7 +4,7 @@ public class Vertex {
 	
 	int 	 VertexId;
 	HalfEdge emitHalfEdge;
-	Coordinates vCoord;
+	Coordinates vCoord=new Coordinates();
 	Vertex   next, prev;
 	
 	public Vertex(Coordinates coord,HalfEdge assocHe)

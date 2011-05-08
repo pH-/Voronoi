@@ -15,9 +15,18 @@ public class BeachLineInternalNode {
 	BeachLineLeafNode     leftLeaf;
 	BeachLineLeafNode	  rightLeaf;
 
+	public BeachLineInternalNode()
+	{
+		upperArcFocus = new Coordinates();
+		lowerArcFocus = new Coordinates();
+	}
 	public void setId()
 	{
 		id=GlobalVariable.getBeachLineId();
+	}
+	public void setId(int i)
+	{
+		id = i;
 	}
 	public void setTuple(Coordinates upperFocus,Coordinates lowerFocus)
 	{
@@ -77,20 +86,39 @@ public class BeachLineInternalNode {
 	public Coordinates getBrkPoint(Coordinates focus1, Coordinates focus2, double Xdirectrix,int whichBrkPt)
 	{
 		Coordinates[] brkPoint = new Coordinates[2];
-		double k1,k2,k3,a,b,c,a1,b1,a2,b2,a3,brkx1,brkx2,brky1,brky2;
+		brkPoint[0] = new Coordinates();
+		brkPoint[1] = new Coordinates();
+		double a1,b1,a2,b2,a3,brkx1,brkx2,brky1,brky2,termx1,termx2,termx3,termy1,termy2,termy3;
+		
 		a1=focus1.getXcoord(); b1=focus1.getYcoord();
 		a2=focus2.getXcoord(); b2=focus2.getYcoord();
 		a3=Xdirectrix;
-		k1=Math.pow(a1,2)-Math.pow(a2,2)+Math.pow(b1, 2)-Math.pow(b2, 2);
-		k2=b1-b2;
-		k3=k1-2*k2*b1;
-		a=4*k2;
-		b=-4*k2*(1-2*k2*(a3-a1));
-		c=Math.pow(k3, 2)-4*Math.pow(k2, 2)*(Math.pow(a3, 2)-Math.pow(a1, 2));
-		brkx1=(-b+Math.sqrt(Math.pow(b, 2)-4*a*c))/2*a;
-		brkx2=(-b-Math.sqrt(Math.pow(b, 2)-4*a*c))/2*a;
-		brky1=Math.sqrt(Math.pow(a3-brkx1, 2) - Math.pow(brkx1-a1,2)) +b1;
-		brky2=Math.sqrt(Math.pow(a3-brkx2, 2) - Math.pow(brkx2-a1,2)) +b1;
+		
+		if(a1==a2 && b1!=b2)
+		{
+			brkx1=brkx2=((-4*a2*a2)+(4*a3*a3)-(b1*b1)-(b2*b2)+(2*b1*b2))/(8*a3-a2);
+			brky1=brky2=0.5*(b1+b2);
+		}
+		else if(b1==b2 && a1!=a2)
+		{
+			brkx1=brkx2=0.5*(a1+a2);
+			brky1=b2-(Math.sqrt((a3-a1)*(a3-a2)));
+			brky2=b2+(Math.sqrt((a3-a1)*(a3-a2)));
+		}
+		else
+		{
+			termx1=(a1*b1*b1)+(a1*b2*b2)-(2*a1*b1*b2)+(a2*b1*b1)-(2*a3*b1*b1)+(a2*b2*b2)-(2*a3*b2*b2)-(2*a2*b1*b2)+(4*a3*b1*b2);
+			termx2=2*Math.sqrt((a3*a3 - (a1*a3) - (a2*a3) + (a1*a2)) * (b2-b1)*(b2-b1) * (a1*a1-(2*a2*a1) + (a2*a2) + (b1*b1) + (b2*b2) - (2*b1*b2)));
+			termx3=a1*a1*a1 - a2*a1*a1 -a2*a2*a1 + a2*a2*a2;
+			brkx1 = (0.5/((a2-a1)*(a2-a1)))*(termx1-termx2+termx3);
+			brkx2 = (0.5/((a2-a1)*(a2-a1)))*(termx1+termx2+termx3);
+			
+			termy1= -a2*b1*b1 + a3*b1*b1 + (a1 + a2 - 2*a3)*b2*b1 - (a1-a3)*b2*b2;
+			termy2= (a3*a3-a1*a3-a2*a3+a1*a2)*(b2-b1)*(b2-b1)*(a1*a1-2*a2*a1+a2*a2+b1*b1+b2*b2-2*b1*b2);
+			termy3= (a2-a1)*(b2-b1);
+			brky1 = (termy1+Math.sqrt(termy2))/termy3;
+			brky2 = (termy1-Math.sqrt(termy2))/termy3;
+		}
 		
 		brkPoint[0].setXYcoords(brkx1, brky1);
 		brkPoint[1].setXYcoords(brkx2, brky2);

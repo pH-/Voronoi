@@ -1,7 +1,7 @@
 package pkg.voronoi;
 
 public class BeachLineLeafNode {
-	Coordinates focusOfArc=null;
+	Coordinates focusOfArc=new Coordinates();
 	EventQueueNode	killerCircleEvent;
 	BeachLineInternalNode parent;
 	int color = 0;
@@ -58,7 +58,13 @@ public class BeachLineLeafNode {
 		}
 		else
 		{
-			return tree.getTreemin(tree.getSuccessor(this));
+			BeachLineInternalNode successor = tree.getSuccessor(this);
+			if(successor==null)
+				return null;
+			if(successor.getRightChild()==null)
+				return successor.getRightLeaf();
+			else
+				return tree.getTreemin(successor.getRightChild());
 		}
 	}
 	
@@ -73,7 +79,13 @@ public class BeachLineLeafNode {
 		}
 		else
 		{
-			return tree.getTreemax(tree.getPredecessor(this));
+			BeachLineInternalNode predecessor = tree.getPredecessor(this);
+			if(predecessor==null)
+				return null;
+			if(predecessor.getLeftChild()==null)
+				return predecessor.getLeftLeaf();
+			else
+				return tree.getTreemax(predecessor.getLeftChild());
 		}
 	}
 }

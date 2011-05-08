@@ -8,15 +8,16 @@ public class EventQueue {
 		return rootNode;
 	}
 
-	public void setRootNode(EventQueueNode rootNode) {
-		this.rootNode = rootNode;
-	}
+	//public void setRootNode(EventQueueNode rootNode) {
+		//this.rootNode = rootNode;
+	//}
 
 	public void insertSiteEvent(EventQueueNode newNode)
 	{
 		if(rootNode==null)
 		{
 			rootNode = newNode;
+			newNode.setTree(this);
 		}
 		else
 		{
@@ -86,17 +87,24 @@ public class EventQueue {
 			}
 			newNode.setParent(nodeToDelete.getParent());
 			
-			if(nodeToDelete == nodeToDelete.getParent().getLeftChild())
-				newNode.getParent().setLeftChild(newNode);
-			else
-				newNode.getParent().setRightChild(newNode);
-			
 			if(rootNode == nodeToDelete)
+			{
 				rootNode = newNode;
+				newNode.setTree(this);
+			}
+			else
+			{
+				if(nodeToDelete == nodeToDelete.getParent().getLeftChild())
+					newNode.getParent().setLeftChild(newNode);
+				else
+					newNode.getParent().setRightChild(newNode);
+			}
+			
 		}
 		else
 		{
-			
+			nodeToDelete.getParent().setRightChild(nodeToDelete.getLeftChild());
+			nodeToDelete.getLeftChild().setParent(nodeToDelete.getParent());
 		}
 	}
 	public EventQueueNode findTreeMin(EventQueueNode root)

@@ -33,4 +33,12 @@ public class VoronoiMesh {
 		}
 	}
 
+	public static HalfEdge getHeListRoot() {
+		return heListRoot;
+	}
+
+	public static void setHeListRoot(HalfEdge heListRoot) {
+		VoronoiMesh.heListRoot = heListRoot;
+	}
+
 }

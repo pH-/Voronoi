@@ -7,19 +7,16 @@ public class Driver {
 	public static void main(String[] args)
 	{
 		ArrayList<Coordinates> inputPoints = new ArrayList<Coordinates>(5);
-		Coordinates tempvar= new Coordinates(-2,4);
-		
-
-			//tempvar.setXYcoords(-2, 4);
+		Coordinates tempvar= new Coordinates(0,4);
+		inputPoints.add(tempvar);
+		tempvar= new Coordinates(0,0);
+		inputPoints.add(tempvar);
+		tempvar= new Coordinates(-1,2);
 			inputPoints.add(tempvar);
-			tempvar.setXYcoords(0, 2);
+		tempvar= new Coordinates(1,2);
 			inputPoints.add(tempvar);
-			tempvar.setXYcoords(1, 0);
-			inputPoints.add(tempvar);
-			tempvar.setXYcoords(-1, -2);
-			inputPoints.add(tempvar);
-			tempvar.setXYcoords(-3, -4);
-			inputPoints.add(tempvar);
+		/*	tempvar.setXYcoords(-3, -4);
+			inputPoints.add(tempvar);*/
 			
 		plotVoronoi(inputPoints);
 	}
@@ -38,7 +35,9 @@ public class Driver {
 				handleSiteEvent(eventQ, status, currEvent);
 			else
 				handleCircleEvent(eventQ,status,currEvent);
+			eventQ.deleteNode(currEvent);
 		}
+		status.setHalfEdges(200.0);
 	}
 	
 	private static void initEventQ(ArrayList<Coordinates> inputPts,EventQueue eventQ)
@@ -79,13 +78,24 @@ public class Driver {
 		vertex= new Vertex(vertexCoords,currEvent.getArcToKill().getLeftSibling(statusTree).getParent().getAssocHe());
 		currEvent.getArcToKill().getLeftSibling(statusTree).setKillerCircleEvent(null);
 		currEvent.getArcToKill().getRightSibling(statusTree).setKillerCircleEvent(null);
-		currEvent.getArcToKill().getRightSibling(statusTree).getParent().getAssocHe().setTargetVertex(vertex);
-		currEvent.getArcToKill().getLeftSibling(statusTree).getParent().getAssocHe().setTargetVertex(vertex);
-		statusTree.deleteArc(currEvent.getArcToKill());
-		HalfEdge newHe = new HalfEdge();
-		newHe.setSourceVertex(vertex);
-		VoronoiMesh.heInsert(newHe);
+		HalfEdge temphePtr = currEvent.getArcToKill().getRightSibling(statusTree).getParent().getAssocHe();
+		if(temphePtr.getTargetVertex()==null)
+			temphePtr.setTargetVertex(vertex);
+		else
+			temphePtr.setSourceVertex(vertex);
+		temphePtr = currEvent.getArcToKill().getLeftSibling(statusTree).getParent().getAssocHe();
+		if(temphePtr.getTargetVertex()==null)
+			temphePtr.setTargetVertex(vertex);
+		else
+			temphePtr.setSourceVertex(vertex);
 		
+		HalfEdge newHe = new HalfEdge();
+		currEvent.getArcToKill().getLeftSibling(statusTree).getParent().setAssocHe(newHe);
+		currEvent.getArcToKill().getRightSibling(statusTree).getParent().setAssocHe(newHe);
+		
+		statusTree.deleteArc(currEvent.getArcToKill());
+		newHe.setSourceVertex(vertex);
+		VoronoiMesh.heInsert(newHe);	
 	}
 	private static void checkForCircleKiller(BeachLineLeafNode newArc,BeachLine tree,EventQueue eventQ)
 	{	
