@@ -4,7 +4,7 @@ import java.lang.Math;
 
 public class Driver {
 	
-	public static void main(String[] args)
+	/*public static void main(String[] args)
 	{
 		ArrayList<Coordinates> inputPoints = new ArrayList<Coordinates>(5);
 		Coordinates tempvar= new Coordinates(0,4);
@@ -17,11 +17,11 @@ public class Driver {
 			inputPoints.add(tempvar);
 		/*	tempvar.setXYcoords(-3, -4);
 			inputPoints.add(tempvar);*/
-			
+	/*		
 		plotVoronoi(inputPoints);
-	}
+	}*/
 
-	private static void plotVoronoi(ArrayList<Coordinates> inputPts) //,EventQueue eventQ)
+	public static void plotVoronoi(ArrayList<Coordinates> inputPts) //,EventQueue eventQ)
 	{
 		EventQueue eventQ = new EventQueue();
 		BeachLine  status = new BeachLine();
@@ -37,7 +37,8 @@ public class Driver {
 				handleCircleEvent(eventQ,status,currEvent);
 			eventQ.deleteNode(currEvent);
 		}
-		status.setHalfEdges(200.0);
+		VoronoiMesh.setHalfEdges(400.0);
+		Canvas.drawEdges();
 	}
 	
 	private static void initEventQ(ArrayList<Coordinates> inputPts,EventQueue eventQ)
@@ -83,11 +84,13 @@ public class Driver {
 		vertex= new Vertex(vertexCoords,leftNeighbour.getParent().getAssocHe());
 		leftNeighbour.setKillerCircleEvent(null);
 		rightNeighbour.setKillerCircleEvent(null);
+		
 		HalfEdge temphePtr = rightNeighbour.getParent().getAssocHe();
 		if(temphePtr.getTargetVertex()==null)
 			temphePtr.setTargetVertex(vertex);
 		else
 			temphePtr.setSourceVertex(vertex);
+		
 		temphePtr = leftNeighbour.getParent().getAssocHe();
 		if(temphePtr.getTargetVertex()==null)
 			temphePtr.setTargetVertex(vertex);
@@ -95,10 +98,26 @@ public class Driver {
 			temphePtr.setSourceVertex(vertex);
 		
 		HalfEdge newHe = new HalfEdge();
-		leftNeighbour.getParent().setAssocHe(newHe);
-		rightNeighbour.getParent().setAssocHe(newHe);
+		
+		//leftNeighbour.getParent().setAssocHe(newHe);
+		//rightNeighbour.getParent().setAssocHe(newHe);
+		
+		BeachLineInternalNode newBrkPtNode;
+		
+		if(statusTree.getSuccessor(currEvent.getArcToKill())==currEvent.getArcToKill().getParent())
+		{	
+			newBrkPtNode = statusTree.getPredecessor(currEvent.getArcToKill());
+		}
+		else
+		{
+			newBrkPtNode= statusTree.getSuccessor(currEvent.getArcToKill());
+		}
 		
 		statusTree.deleteArc(currEvent.getArcToKill());
+		newBrkPtNode.setAssocHe(newHe);
+		newHe.setLowerArcFocus(newBrkPtNode.getLowerFocus());
+		newHe.setLowerArcFocus(newBrkPtNode.getUpperFocus());
+		newHe.setAssocFlag(newBrkPtNode.getBrkPtFlg());
 		newHe.setSourceVertex(vertex);
 		VoronoiMesh.heInsert(newHe);
 		getNewCircleEvents(leftNeighbour, rightNeighbour, eventQ, statusTree);

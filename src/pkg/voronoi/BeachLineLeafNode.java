@@ -24,7 +24,10 @@ public class BeachLineLeafNode {
 	{
 		return focusOfArc.getYcoord();
 	}
-	
+	public Coordinates getFocusObj()
+	{
+		return focusOfArc;
+	}
 	public EventQueueNode getKillerCircleEvent() {
 		return killerCircleEvent;
 	}

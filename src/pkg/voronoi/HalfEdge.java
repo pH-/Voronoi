@@ -3,6 +3,9 @@ package pkg.voronoi;
 public class HalfEdge {
 	
 	Vertex sourceVertex, targetVertex;
+	Coordinates upperArcFocus;
+	Coordinates	lowerArcFocus;
+	int 		assocFlag;
 	Cell   parentCell;
 	HalfEdge next, prev;
 	
@@ -53,6 +56,30 @@ public class HalfEdge {
 	public HalfEdge getPrevHe()
 	{
 		return prev;
+	}
+
+	public Coordinates getUpperArcFocus() {
+		return upperArcFocus;
+	}
+
+	public void setUpperArcFocus(Coordinates upperArcFocus) {
+		this.upperArcFocus.setXYcoords(upperArcFocus.getXcoord(),upperArcFocus.getYcoord());
+	}
+
+	public Coordinates getLowerArcFocus() {
+		return lowerArcFocus;
+	}
+
+	public void setLowerArcFocus(Coordinates lowerArcFocus) {
+		this.lowerArcFocus.setXYcoords(lowerArcFocus.getXcoord(), lowerArcFocus.getYcoord());
+	}
+
+	public int getAssocFlag() {
+		return assocFlag;
+	}
+
+	public void setAssocFlag(int assocFlag) {
+		this.assocFlag = assocFlag;
 	}
 
 }

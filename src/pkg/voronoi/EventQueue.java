@@ -54,11 +54,12 @@ public class EventQueue {
 	{
 		if(rootNode!=null)
 		{
-			if(node.getLeftChild() == null && node.getRightChild() == null)
+			//if(node.getLeftChild() == null && node.getRightChild() == null)
+			if(node.getRightChild() == null)
 				if(node.isLeftChild())
-					node.getParent().setLeftChild(null);
+					node.getParent().setLeftChild(node.getLeftChild());
 				else if(node.isRightChild())
-					node.getParent().setRightChild(null);
+					node.getParent().setRightChild(node.getLeftChild());
 				else
 					rootNode=null;
 			else

@@ -28,5 +28,11 @@ public class Coordinates {
 	{
 		return ycoord;
 	}
-
+	public boolean equals(Coordinates secondObj)
+	{
+		if(this.xcoord==secondObj.getXcoord() && this.ycoord==secondObj.getYcoord())
+			return true;
+		else
+			return false;
+	}
 }

@@ -55,6 +55,9 @@ public class BeachLine {
 			lowerF.setXYcoords(newTuple2.getLeftLeaf().getFocusX(), newTuple2.getLeftLeaf().getFocusY());
 			upperF.setXYcoords(newTuple2.getRightLeaf().getFocusX(), newTuple2.getRightLeaf().getFocusY());
 			newTuple2.setTuple(upperF, lowerF);
+			halfEdge.setLowerArcFocus(lowerF);
+			halfEdge.setUpperArcFocus(upperF);
+			
 		}
 		else
 		{
@@ -65,7 +68,7 @@ public class BeachLine {
 	
 	private void recursiveTreeInsert(BeachLineInternalNode root, BeachLineLeafNode newArc)
 	{
-		Coordinates breakPoint = root.getBrkPoint(root.getLowerFocus(), root.getUpperFocus(),newArc.getFocusX(),root.getBrkPtFlg());
+		Coordinates breakPoint = BeachLineInternalNode.getBrkPoint(root.getLowerFocus(), root.getUpperFocus(),newArc.getFocusX(),root.getBrkPtFlg());
 		if(breakPoint.getYcoord() >= newArc.getFocusY())
 		{
 			if(root.getLeftChild()!=null)
@@ -237,6 +240,40 @@ public class BeachLine {
 				}
 			}
 		}
+		if(this.getSuccessor(deadArc)!=null && this.getPredecessor(deadArc)!=null)
+		{
+			if(this.getSuccessor(deadArc)==deadArc.getParent())
+			{
+				if(this.getPredecessor(deadArc).getLowerFocus().equals(deadArc.getFocusObj()))
+				{
+					this.getPredecessor(deadArc).setLowerFocus(deadArc.getRightSibling(this).getFocusObj());
+				}
+				else
+				{
+					this.getPredecessor(deadArc).setUpperFocus(deadArc.getRightSibling(this).getFocusObj());	
+				}
+				
+				BeachLineInternalNode inode = this.getPredecessor(deadArc);
+				inode.getAssocHe().setAssocFlag(1-inode.getBrkPtFlg());
+				double flagVal = BeachLineInternalNode.getBrkPoint(inode.getUpperFocus(), inode.getLowerFocus(), deadArc.getKillerCircleEvent().getX(), 2).getXcoord();
+				inode.setBrkPtFlg((int)flagVal);
+			}
+			else
+			{
+				if(this.getSuccessor(deadArc).getLowerFocus().equals(deadArc.getFocusObj()))
+				{
+					this.getSuccessor(deadArc).setLowerFocus(deadArc.getLeftSibling(this).getFocusObj());
+				}
+				else
+				{
+					this.getSuccessor(deadArc).setUpperFocus(deadArc.getLeftSibling(this).getFocusObj());
+				}
+				BeachLineInternalNode inode = this.getSuccessor(deadArc);
+				inode.getAssocHe().setAssocFlag(1-inode.getBrkPtFlg());
+				double flagVal = BeachLineInternalNode.getBrkPoint(inode.getUpperFocus(), inode.getLowerFocus(), deadArc.getKillerCircleEvent().getX(), 2).getXcoord();
+				inode.setBrkPtFlg((int)flagVal);
+			}
+		}
 	}
 	
 	public void leftRotate(BeachLineInternalNode xnode)
@@ -336,27 +373,7 @@ public class BeachLine {
 			return findGrandParentPredecessor(parent.getParent());
 	}
 	
-	public void setHalfEdges(double directrixPos)
-	{
-		//BeachLineInternalNode rootOfTree = root;
-		while(root.getId()!=-1)
-		{
-			BeachLineLeafNode obsoleteArc = getTreemin(root);
-			BeachLineInternalNode nextBrk = obsoleteArc.getParent();
-			Coordinates breakPoint = nextBrk.getBrkPoint(nextBrk.getLowerFocus(), nextBrk.getUpperFocus(),directrixPos,nextBrk.getBrkPtFlg());
-			if(nextBrk.getAssocHe().getSourceVertex()==null)
-			{
-				Vertex newVertex = new Vertex(breakPoint,nextBrk.getAssocHe());
-				nextBrk.getAssocHe().setSourceVertex(newVertex);
-			}
-			else if(nextBrk.getAssocHe().getTargetVertex()==null)
-			{
-				Vertex newVertex = new Vertex(breakPoint,nextBrk.getAssocHe());
-				nextBrk.getAssocHe().setTargetVertex(newVertex);
-			}
-			this.deleteArc(obsoleteArc);
-		}
-	}
+	
 	
 	public int getCount()
 	{

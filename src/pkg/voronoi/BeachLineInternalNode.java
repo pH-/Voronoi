@@ -41,6 +41,16 @@ public class BeachLineInternalNode {
 	{
 		return lowerArcFocus;
 	}
+	
+	public void setUpperFocus(Coordinates newCoords)
+	{
+		upperArcFocus.setXYcoords(newCoords.getXcoord(), newCoords.getYcoord());
+	}
+	public void setLowerFocus(Coordinates newCoords)
+	{
+		lowerArcFocus.setXYcoords(newCoords.getXcoord(), newCoords.getYcoord());
+	}
+	
 	public int getId()
 	{
 		return id;
@@ -83,7 +93,7 @@ public class BeachLineInternalNode {
 		this.leftLeaf = leftLeaf;
 	}
 	
-	public Coordinates getBrkPoint(Coordinates focus1, Coordinates focus2, double Xdirectrix,int whichBrkPt)
+	public static Coordinates getBrkPoint(Coordinates focus1, Coordinates focus2, double Xdirectrix,int whichBrkPt)
 	{
 		Coordinates[] brkPoint = new Coordinates[2];
 		brkPoint[0] = new Coordinates();
@@ -130,13 +140,30 @@ public class BeachLineInternalNode {
 			else
 				return brkPoint[1];
 		}
-		else
+		else if(whichBrkPt==1)
 		{
 			if(brky1>brky2)	
 				return brkPoint[0];
 			else
 				return brkPoint[1];
 		}
+		else
+			if(brkx1>brkx2)
+			{
+				if(brky1>brky2)
+					brkPoint[0].setXYcoords(1, 1);
+				else
+					brkPoint[0].setXYcoords(0, 0);
+				return brkPoint[0];
+			}
+			else
+			{
+				if(brky2>brky1)
+					brkPoint[1].setXYcoords(1, 1);
+				else
+					brkPoint[1].setXYcoords(0, 0);
+				return brkPoint[1];
+			}
 	}
 	
 	public HalfEdge getAssocHe() {
