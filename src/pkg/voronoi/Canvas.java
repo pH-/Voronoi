@@ -19,12 +19,16 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 	ArrayList<Point2D.Double> dots = new ArrayList<Point2D.Double>(5);
 	static ArrayList<Line2D.Double> edges = new ArrayList<Line2D.Double>(5);
 	Button getVoronoi;
+	Button clear;
 	
 	public void init() 
 	{
 		getVoronoi = new Button("Get Voronoi");
+		clear	   = new Button("Clear"); 
 		getVoronoi.addActionListener(this);
+		clear.addActionListener(this);
 		add(getVoronoi);
+		add(clear);
 		addMouseListener(this);
 		this.setSize(400, 300);
 	}
@@ -93,7 +97,19 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 	}
 	public void actionPerformed(ActionEvent event)
 	{
-		Driver.plotVoronoi(inputPoints);
-		repaint();
+		if(event.getSource()==getVoronoi)
+		{	
+			Driver.plotVoronoi(inputPoints);
+			repaint();
+		}
+		else if(event.getSource()==clear)
+		{
+			inputPoints.clear();
+			dots.clear();
+			edges.clear();
+			System.exit(0);
+			repaint();
+		}
 	}
+	
 }
