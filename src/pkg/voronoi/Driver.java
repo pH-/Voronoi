@@ -4,23 +4,20 @@ import java.lang.Math;
 
 public class Driver {
 	
-	/*public static void main(String[] args)
+/*	public static void main(String[] args)
 	{
 		ArrayList<Coordinates> inputPoints = new ArrayList<Coordinates>(5);
-		Coordinates tempvar= new Coordinates(0,4);
+		Coordinates tempvar= new Coordinates(176,230);
 		inputPoints.add(tempvar);
-		tempvar= new Coordinates(0,0);
+		tempvar= new Coordinates(182,84);
 		inputPoints.add(tempvar);
-		tempvar= new Coordinates(-1,2);
+		tempvar= new Coordinates(133,186);
 			inputPoints.add(tempvar);
-		tempvar= new Coordinates(1,2);
+		tempvar= new Coordinates(227,189);
 			inputPoints.add(tempvar);
-		/*	tempvar.setXYcoords(-3, -4);
-			inputPoints.add(tempvar);*/
-	/*		
 		plotVoronoi(inputPoints);
-	}*/
-
+	}
+*/
 	public static void plotVoronoi(ArrayList<Coordinates> inputPts) //,EventQueue eventQ)
 	{
 		EventQueue eventQ = new EventQueue();
@@ -37,7 +34,7 @@ public class Driver {
 				handleCircleEvent(eventQ,status,currEvent);
 			eventQ.deleteNode(currEvent);
 		}
-		VoronoiMesh.setHalfEdges(400.0);
+		VoronoiMesh.setHalfEdges(1000.0);
 		Canvas.drawEdges();
 	}
 	
@@ -85,13 +82,13 @@ public class Driver {
 		leftNeighbour.setKillerCircleEvent(null);
 		rightNeighbour.setKillerCircleEvent(null);
 		
-		HalfEdge temphePtr = rightNeighbour.getParent().getAssocHe();
+		HalfEdge temphePtr = statusTree.getSuccessor(currEvent.getArcToKill()).getAssocHe();
 		if(temphePtr.getTargetVertex()==null)
 			temphePtr.setTargetVertex(vertex);
 		else
 			temphePtr.setSourceVertex(vertex);
 		
-		temphePtr = leftNeighbour.getParent().getAssocHe();
+		temphePtr = statusTree.getPredecessor(currEvent.getArcToKill()).getAssocHe();
 		if(temphePtr.getTargetVertex()==null)
 			temphePtr.setTargetVertex(vertex);
 		else
@@ -116,11 +113,11 @@ public class Driver {
 		statusTree.deleteArc(currEvent.getArcToKill());
 		newBrkPtNode.setAssocHe(newHe);
 		newHe.setLowerArcFocus(newBrkPtNode.getLowerFocus());
-		newHe.setLowerArcFocus(newBrkPtNode.getUpperFocus());
+		newHe.setUpperArcFocus(newBrkPtNode.getUpperFocus());
 		newHe.setAssocFlag(newBrkPtNode.getBrkPtFlg());
 		newHe.setSourceVertex(vertex);
 		VoronoiMesh.heInsert(newHe);
-		getNewCircleEvents(leftNeighbour, rightNeighbour, eventQ, statusTree);
+		getNewCircleEvents(leftNeighbour, rightNeighbour, eventQ, statusTree,currEvent.getX());
 	}
 	private static void checkForCircleKiller(BeachLineLeafNode newArc,BeachLine tree,EventQueue eventQ)
 	{	
@@ -141,11 +138,19 @@ public class Driver {
 			EventQueueNode newCircleEvent1=null, newCircleEvent2=null;
 			if(point2!=null)
 				if(point3!=null)
-					newCircleEvent1 = getCircleEvent(point1, point2, point3);
+					newCircleEvent1 = getCircleEvent(point1, point2, point3,point1.getXcoord());
 			if(point4!=null)
 				if(point5!=null)
-					newCircleEvent2 = getCircleEvent(point1, point4, point5);
+					newCircleEvent2 = getCircleEvent(point1, point4, point5,point1.getXcoord());
 			
+			
+			if(newCircleEvent1!=null && newCircleEvent2!=null && newCircleEvent1.getXycoord().equals(newCircleEvent2.getXycoord()))
+			{
+				if(newCircleEvent1.getY()<point1.getYcoord())
+					newCircleEvent1=null;
+				else
+					newCircleEvent2=null;
+			}
 			if(newCircleEvent1!=null)
 			{
 				newCircleEvent1.setArcToKill(newArc.getRightSibling(tree));
@@ -161,14 +166,14 @@ public class Driver {
 		}
 		
 	}
-	private static EventQueueNode getCircleEvent(Coordinates pt1, Coordinates pt2, Coordinates pt3)
+	private static EventQueueNode getCircleEvent(Coordinates pt1, Coordinates pt2, Coordinates pt3, double Xdirectrix)
 	{
 		double d,x,y,radius;
 		d=2*(pt1.getYcoord()*pt3.getXcoord()+pt2.getYcoord()*pt1.getXcoord()-pt2.getYcoord()*pt3.getXcoord()-pt1.getYcoord()*pt2.getXcoord() -pt3.getYcoord()*pt1.getXcoord() + pt3.getYcoord()*pt2.getXcoord());
 		x= (pt2.getYcoord()*Math.pow(pt1.getXcoord(),2.0) - pt3.getYcoord()*Math.pow(pt1.getXcoord(),2.0) - Math.pow(pt2.getYcoord(),2.0)*pt1.getYcoord() + Math.pow(pt3.getYcoord(),2.0)*pt1.getYcoord() + Math.pow(pt2.getXcoord(),2.0)*pt3.getYcoord() + Math.pow(pt1.getYcoord(),2.0)*pt2.getYcoord() + Math.pow(pt3.getXcoord(),2.0)*pt1.getYcoord() - Math.pow(pt3.getYcoord(),2.0)*pt2.getYcoord() - Math.pow(pt3.getXcoord(),2.0)*pt2.getYcoord() - Math.pow(pt2.getXcoord(),2.0)*pt1.getYcoord() + Math.pow(pt2.getYcoord(),2.0)*pt3.getYcoord() - Math.pow(pt1.getYcoord(),2.0)*pt3.getYcoord() ) / d;
 		y= (Math.pow(pt1.getXcoord(),2.0)*pt3.getXcoord() + Math.pow(pt1.getYcoord(),2.0)*pt3.getXcoord() + Math.pow(pt2.getXcoord(),2.0)*pt1.getXcoord() - Math.pow(pt2.getXcoord(),2.0)*pt3.getXcoord() + Math.pow(pt2.getYcoord(),2.0)*pt1.getXcoord() - Math.pow(pt2.getYcoord(),2.0)*pt3.getXcoord() - Math.pow(pt1.getXcoord(),2.0)*pt2.getXcoord() - Math.pow(pt1.getYcoord(),2.0)*pt2.getXcoord() - Math.pow(pt3.getXcoord(),2.0)*pt1.getXcoord() + Math.pow(pt3.getXcoord(),2.0)*pt2.getXcoord() - Math.pow(pt3.getYcoord(),2.0)*pt1.getXcoord() + Math.pow(pt3.getYcoord(),2.0)*pt2.getXcoord()) / d;
 		radius = Math.sqrt(Math.pow((x-pt1.getXcoord()),2.0)+Math.pow((y-pt1.getYcoord()), 2.0));
-		if(x+radius>=pt1.getXcoord())
+		if(x+radius>=Xdirectrix)
 		{
 			Coordinates newCircCoords = new Coordinates(x+radius,y);
 			EventQueueNode newCircEvent = new EventQueueNode(newCircCoords,radius,null);
@@ -178,7 +183,7 @@ public class Driver {
 			return null;
 	}
 	
-	private static void getNewCircleEvents(BeachLineLeafNode leftArc, BeachLineLeafNode rightArc, EventQueue eventQ, BeachLine statusTree)
+	private static void getNewCircleEvents(BeachLineLeafNode leftArc, BeachLineLeafNode rightArc, EventQueue eventQ, BeachLine statusTree,double Xdirectrix)
 	{
 		BeachLineLeafNode leftMost = leftArc.getLeftSibling(statusTree);
 		BeachLineLeafNode rightMost = rightArc.getRightSibling(statusTree);
@@ -192,9 +197,9 @@ public class Driver {
 		if(leftMost!=null)
 			point4 = new Coordinates(leftMost.getFocusX(),leftMost.getFocusY());
 		if(point3!=null)
-			newCircleEvent1 = getCircleEvent(point1, point2, point3);
+			newCircleEvent1 = getCircleEvent(point1, point2, point3,Xdirectrix);
 		if(point4!=null)
-			newCircleEvent2 = getCircleEvent(point1, point2, point4);
+			newCircleEvent2 = getCircleEvent(point1, point2, point4,Xdirectrix);
 		
 		if(newCircleEvent1!=null)
 		{

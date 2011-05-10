@@ -67,6 +67,7 @@ public class VoronoiMesh {
 				Vertex newVertex = new Vertex(heCoords,he);
 				he.setTargetVertex(newVertex);
 			}
+			he=he.getNextHe();
 
 		}
 	}

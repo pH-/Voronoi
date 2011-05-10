@@ -56,12 +56,22 @@ public class EventQueue {
 		{
 			//if(node.getLeftChild() == null && node.getRightChild() == null)
 			if(node.getRightChild() == null)
+			{
 				if(node.isLeftChild())
+				{
 					node.getParent().setLeftChild(node.getLeftChild());
+					if(node.getLeftChild()!=null)
+						node.getLeftChild().setParent(node.getParent());
+				}
 				else if(node.isRightChild())
+				{
 					node.getParent().setRightChild(node.getLeftChild());
+					if(node.getLeftChild()!=null)
+						node.getLeftChild().setParent(node.getParent());
+				}
 				else
 					rootNode=null;
+			}
 			else
 			{
 				replaceNode(node);
@@ -78,13 +88,23 @@ public class EventQueue {
 			if(newNode!=nodeToDelete.getRightChild())
 			{
 				if(newNode == newNode.getParent().getLeftChild())
+				{
 					newNode.getParent().setLeftChild(newNode.getRightChild());
+					if(newNode.getRightChild()!=null)
+						newNode.getRightChild().setParent(newNode.getParent());
+				}
 				newNode.setLeftChild(nodeToDelete.getLeftChild());
 				newNode.setRightChild(nodeToDelete.getRightChild());
+				if(nodeToDelete.getLeftChild()!=null)
+					nodeToDelete.getLeftChild().setParent(newNode);
+				if(nodeToDelete.getRightChild()!=null)
+					nodeToDelete.getRightChild().setParent(newNode);
 			}
 			else
 			{
 				newNode.setLeftChild(nodeToDelete.getLeftChild());
+				if(nodeToDelete.getLeftChild()!=null)
+					nodeToDelete.getLeftChild().setParent(newNode);
 			}
 			newNode.setParent(nodeToDelete.getParent());
 			
@@ -96,9 +116,10 @@ public class EventQueue {
 			else
 			{
 				if(nodeToDelete == nodeToDelete.getParent().getLeftChild())
-					newNode.getParent().setLeftChild(newNode);
+					nodeToDelete.getParent().setLeftChild(newNode);
 				else
-					newNode.getParent().setRightChild(newNode);
+					nodeToDelete.getParent().setRightChild(newNode);
+				newNode.setParent(nodeToDelete.getParent());
 			}
 			
 		}

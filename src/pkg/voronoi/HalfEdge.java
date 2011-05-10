@@ -3,8 +3,8 @@ package pkg.voronoi;
 public class HalfEdge {
 	
 	Vertex sourceVertex, targetVertex;
-	Coordinates upperArcFocus;
-	Coordinates	lowerArcFocus;
+	Coordinates upperArcFocus = new Coordinates();
+	Coordinates	lowerArcFocus = new Coordinates();
 	int 		assocFlag;
 	Cell   parentCell;
 	HalfEdge next, prev;
