@@ -93,11 +93,12 @@ public class BeachLineInternalNode {
 		this.leftLeaf = leftLeaf;
 	}
 	
-	public static Coordinates getBrkPoint(Coordinates focus1, Coordinates focus2, double Xdirectrix,int whichBrkPt)
+	public static Coordinates getBrkPoint(Coordinates focus1, Coordinates focus2, Coordinates directrix,double radius, int whichBrkPt)
 	{
 		Coordinates[] brkPoint = new Coordinates[2];
 		brkPoint[0] = new Coordinates();
 		brkPoint[1] = new Coordinates();
+		double 	 Xdirectrix = directrix.getXcoord();
 		double a1,b1,a2,b2,a3,brkx1,brkx2,brky1,brky2,termx1,termx2,termx3,termy1,termy2,termy3;
 		
 		a1=focus1.getXcoord(); b1=focus1.getYcoord();
@@ -148,7 +149,27 @@ public class BeachLineInternalNode {
 				return brkPoint[1];
 		}
 		else
-			if(brkx1>brkx2)
+			if((int)brkx1==(int)brkx2)
+			{
+				if(brky1==directrix.getYcoord())
+				{
+					if(brky1>brky2)
+						brkPoint[0].setXYcoords(1, 1);
+					else
+						brkPoint[0].setXYcoords(0, 0);
+					return brkPoint[0];
+						
+				}
+				else
+				{
+					if(brky2>brky1)
+						brkPoint[1].setXYcoords(1, 1);
+					else
+						brkPoint[1].setXYcoords(0, 0);
+					return brkPoint[1];
+				}
+			}
+			else if((int)brkx1== (int)(Xdirectrix-radius))
 			{
 				if(brky1>brky2)
 					brkPoint[0].setXYcoords(1, 1);

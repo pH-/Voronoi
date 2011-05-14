@@ -5,6 +5,8 @@ public class HalfEdge {
 	Vertex sourceVertex, targetVertex;
 	Coordinates upperArcFocus = new Coordinates();
 	Coordinates	lowerArcFocus = new Coordinates();
+	Coordinates dirVector	  = new Coordinates();
+	int 		dirty=0;
 	int 		assocFlag;
 	Cell   parentCell;
 	HalfEdge next, prev;
@@ -80,6 +82,25 @@ public class HalfEdge {
 
 	public void setAssocFlag(int assocFlag) {
 		this.assocFlag = assocFlag;
+	}
+
+	public boolean isDirty() {
+		if(dirty==1)
+			return true;
+		else
+			return false;
+	}
+
+	public void makeDirty() {
+		this.dirty = 1;
+	}
+
+	public Coordinates getDirVector() {
+		return dirVector;
+	}
+
+	public void setDirVector(Coordinates dirVector) {
+		this.dirVector.setXYcoords(dirVector.getXcoord(), dirVector.getYcoord());
 	}
 
 }

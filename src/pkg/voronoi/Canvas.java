@@ -30,7 +30,7 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 		add(getVoronoi);
 		add(clear);
 		addMouseListener(this);
-		this.setSize(400, 300);
+		this.setSize(1000, 1000);
 	}
 	
 	public void paint(Graphics g) 
@@ -58,7 +58,7 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 	    {
 	    	for(Line2D.Double edge:edges)
 	    	{
-	    		g2.fill(edge);
+	    		//g2.fill(edge);
 	    		g2.drawLine((int)edge.getX1(), height-(int)edge.getY1(), (int)edge.getX2(), height-(int)edge.getY2());
 	    	}
 	    }

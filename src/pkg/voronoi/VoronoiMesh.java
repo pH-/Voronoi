@@ -46,10 +46,11 @@ public class VoronoiMesh {
 		HalfEdge he = heListRoot;
 		while(he!=null)
 		{
+			Coordinates directrix = new Coordinates(directrixPos,0);
 			if(he.getSourceVertex()==null && he.getTargetVertex()==null)
 			{
-				Coordinates heCoords = BeachLineInternalNode.getBrkPoint(he.getLowerArcFocus(), he.getUpperArcFocus(),directrixPos, he.getAssocFlag());
-				Coordinates heCoords2 = BeachLineInternalNode.getBrkPoint(he.getLowerArcFocus(), he.getUpperArcFocus(),directrixPos,1-he.getAssocFlag());
+				Coordinates heCoords = BeachLineInternalNode.getBrkPoint(he.getLowerArcFocus(), he.getUpperArcFocus(),directrix, 0, he.getAssocFlag());
+				Coordinates heCoords2 = BeachLineInternalNode.getBrkPoint(he.getLowerArcFocus(), he.getUpperArcFocus(),directrix, 0, 1-he.getAssocFlag());
 				Vertex newVertex = new Vertex(heCoords,he);
 				he.setSourceVertex(newVertex);
 				newVertex = new Vertex(heCoords2,he);
@@ -57,13 +58,13 @@ public class VoronoiMesh {
 			}
 			else if(he.getSourceVertex()==null)
 			{
-				Coordinates heCoords = BeachLineInternalNode.getBrkPoint(he.getLowerArcFocus(), he.getUpperArcFocus(),directrixPos, he.getAssocFlag());
+				Coordinates heCoords = BeachLineInternalNode.getBrkPoint(he.getLowerArcFocus(), he.getUpperArcFocus(),directrix, 0, he.getAssocFlag());
 				Vertex newVertex = new Vertex(heCoords,he);
 				he.setSourceVertex(newVertex);
 			}
-			else
+			else if(he.getTargetVertex()==null)
 			{
-				Coordinates heCoords = BeachLineInternalNode.getBrkPoint(he.getLowerArcFocus(), he.getUpperArcFocus(),directrixPos, he.getAssocFlag());
+				Coordinates heCoords = BeachLineInternalNode.getBrkPoint(he.getLowerArcFocus(), he.getUpperArcFocus(),directrix, 0, he.getAssocFlag());
 				Vertex newVertex = new Vertex(heCoords,he);
 				he.setTargetVertex(newVertex);
 			}

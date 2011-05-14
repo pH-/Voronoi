@@ -64,11 +64,22 @@ public class BeachLine {
 			recursiveTreeInsert(root,newArc); 
 		}
 		count++;
+		if(count>1)
+		{
+			BeachLineInternalNode bp1, bp2;
+			bp1 = this.getSuccessor(newArc);
+			bp2 = this.getPredecessor(newArc);
+			Coordinates tempDirectrix = new Coordinates(newArc.getFocusX()+1,newArc.getFocusY());
+			Coordinates endp1 = BeachLineInternalNode.getBrkPoint(bp1.getLowerFocus(), bp1.getUpperFocus(), tempDirectrix, 0, bp1.getBrkPtFlg());
+			Coordinates endp2 = BeachLineInternalNode.getBrkPoint(bp2.getLowerFocus(), bp2.getUpperFocus(), tempDirectrix, 0, bp2.getBrkPtFlg());
+			Coordinates dirVector = getDirection(endp1,endp2);
+			newArc.getParent().getAssocHe().setDirVector(dirVector);
+		}
 	}
 	
 	private void recursiveTreeInsert(BeachLineInternalNode root, BeachLineLeafNode newArc)
 	{
-		Coordinates breakPoint = BeachLineInternalNode.getBrkPoint(root.getLowerFocus(), root.getUpperFocus(),newArc.getFocusX(),root.getBrkPtFlg());
+		Coordinates breakPoint = BeachLineInternalNode.getBrkPoint(root.getLowerFocus(), root.getUpperFocus(),newArc.getFocusObj(), 0, root.getBrkPtFlg());
 		if(breakPoint.getYcoord() >= newArc.getFocusY())
 		{
 			if(root.getLeftChild()!=null)
@@ -144,6 +155,21 @@ public class BeachLine {
 	{
 		if(this.getSuccessor(deadArc)!=null && this.getPredecessor(deadArc)!=null)
 		{
+			BeachLineInternalNode inode = this.getPredecessor(deadArc);
+			BeachLineInternalNode inode2 = this.getSuccessor(deadArc);
+			double flagVal;
+			if(!inode.getAssocHe().isDirty())
+			{
+				flagVal = BeachLineInternalNode.getBrkPoint(inode.getUpperFocus(), inode.getLowerFocus(), deadArc.getKillerCircleEvent().getXycoord(), deadArc.getKillerCircleEvent().getRadius(), 2).getXcoord();
+				inode.getAssocHe().setAssocFlag(1-(int)flagVal);
+				inode.getAssocHe().makeDirty();
+			}
+			if(!inode2.getAssocHe().isDirty())
+			{
+				flagVal = BeachLineInternalNode.getBrkPoint(inode2.getUpperFocus(), inode2.getLowerFocus(), deadArc.getKillerCircleEvent().getXycoord(), deadArc.getKillerCircleEvent().getRadius(), 2).getXcoord();
+				inode2.getAssocHe().setAssocFlag(1-(int)flagVal);
+				inode2.getAssocHe().makeDirty();
+			}
 			if(this.getSuccessor(deadArc)==deadArc.getParent())
 			{
 				if(this.getPredecessor(deadArc).getLowerFocus().equals(deadArc.getFocusObj()))
@@ -155,9 +181,8 @@ public class BeachLine {
 					this.getPredecessor(deadArc).setUpperFocus(deadArc.getRightSibling(this).getFocusObj());	
 				}
 				
-				BeachLineInternalNode inode = this.getPredecessor(deadArc);
-				BeachLineInternalNode inode2 = this.getSuccessor(deadArc);
-				if(deadArc.getKillerCircleEvent().getX()<inode.getUpperFocus().getXcoord() && deadArc.getKillerCircleEvent().getX()<inode.getLowerFocus().getXcoord())
+				
+				/*if(deadArc.getKillerCircleEvent().getX()<inode.getUpperFocus().getXcoord() && deadArc.getKillerCircleEvent().getX()<inode.getLowerFocus().getXcoord())
 				{
 					inode.getAssocHe().setAssocFlag(inode.getBrkPtFlg());
 					inode2.getAssocHe().setAssocFlag(inode2.getBrkPtFlg());
@@ -166,8 +191,8 @@ public class BeachLine {
 				{
 					inode.getAssocHe().setAssocFlag(1-inode.getBrkPtFlg());
 					inode2.getAssocHe().setAssocFlag(1-inode2.getBrkPtFlg());
-				}
-				double flagVal = BeachLineInternalNode.getBrkPoint(inode.getUpperFocus(), inode.getLowerFocus(), deadArc.getKillerCircleEvent().getX(), 2).getXcoord();
+				}*/
+				flagVal = BeachLineInternalNode.getBrkPoint(inode.getUpperFocus(), inode.getLowerFocus(), deadArc.getKillerCircleEvent().getXycoord(), deadArc.getKillerCircleEvent().getRadius(), 2).getXcoord();
 				//if(deadArc.getKillerCircleEvent().getX()<inode.getUpperFocus().getXcoord() && deadArc.getKillerCircleEvent().getX()<inode.getLowerFocus().getXcoord())
 					//flagVal=1-flagVal;
 				inode.setBrkPtFlg((int)flagVal);
@@ -182,14 +207,14 @@ public class BeachLine {
 				{
 					this.getSuccessor(deadArc).setUpperFocus(deadArc.getLeftSibling(this).getFocusObj());
 				}
-				BeachLineInternalNode inode = this.getSuccessor(deadArc);
+				/*BeachLineInternalNode inode = this.getSuccessor(deadArc);
 				BeachLineInternalNode inode2 = this.getPredecessor(deadArc);
 				inode.getAssocHe().setAssocFlag(1-inode.getBrkPtFlg());
-				inode2.getAssocHe().setAssocFlag(1-inode2.getBrkPtFlg());
-				double flagVal = BeachLineInternalNode.getBrkPoint(inode.getUpperFocus(), inode.getLowerFocus(), deadArc.getKillerCircleEvent().getX(), 2).getXcoord();
-				if(deadArc.getKillerCircleEvent().getX()<inode.getUpperFocus().getXcoord() && deadArc.getKillerCircleEvent().getX()<inode.getLowerFocus().getXcoord())
-					flagVal=1-flagVal;
-				inode.setBrkPtFlg((int)flagVal);
+				inode2.getAssocHe().setAssocFlag(1-inode2.getBrkPtFlg());*/
+				flagVal = BeachLineInternalNode.getBrkPoint(inode2.getUpperFocus(), inode2.getLowerFocus(), deadArc.getKillerCircleEvent().getXycoord(),deadArc.getKillerCircleEvent().getRadius(), 2).getXcoord();
+				//if(deadArc.getKillerCircleEvent().getX()<inode.getUpperFocus().getXcoord() && deadArc.getKillerCircleEvent().getX()<inode.getLowerFocus().getXcoord())
+					//flagVal=1-flagVal;
+				inode2.setBrkPtFlg((int)flagVal);
 			}
 		}
 		if(deadArc.getParent().getParent()==null)
@@ -391,7 +416,15 @@ public class BeachLine {
 			return findGrandParentPredecessor(parent.getParent());
 	}
 	
-	
+	public Coordinates getDirection(Coordinates ep1, Coordinates ep2)
+	{
+		Coordinates direction = new Coordinates();
+		double x,y;
+		x = ep1.getXcoord()-ep2.getXcoord();
+		y = ep1.getYcoord()-ep2.getYcoord();
+		direction.setXYcoords(x, y);
+		return direction;
+	}
 	
 	public int getCount()
 	{
