@@ -1,17 +1,23 @@
 package pkg.voronoi;
 
 import java.applet.Applet;
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.MediaTracker;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.net.URL;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.MouseListener;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class Canvas extends Applet implements MouseListener,ActionListener{
 	// The X-coordinate and Y-coordinate of the last click.
+	
 	int xpos;
 	int ypos;
 	int height;
@@ -20,6 +26,7 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 	static ArrayList<Line2D.Double> edges = new ArrayList<Line2D.Double>(5);
 	Button getVoronoi;
 	Button clear;
+	Graphics2D g2;
 	
 	public void init() 
 	{
@@ -36,14 +43,16 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 	public void paint(Graphics g) 
 	{
 		//double x=0,y=0;
-	    Graphics2D g2 = (Graphics2D) g;
+	    g2 = (Graphics2D) g;
 	    height = this.getHeight();
 	    if(dots.size()>0)
 	    {
 	    	for(Point2D.Double point:dots)
 		    {
+	    		g2.setColor(Color.red);
 	    		Ellipse2D.Double circle = new Ellipse2D.Double(point.getX(),point.getY(),5,5);
 	    		g2.fill(circle);
+	    		
 	    		/*if(dots.size()>1)
 	    		{
 	    			Line2D.Double line = new Line2D.Double(x, y, point.getX(), point.getY());
@@ -58,6 +67,7 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 	    {
 	    	for(Line2D.Double edge:edges)
 	    	{
+	    		g2.setColor(Color.blue);
 	    		//g2.fill(edge);
 	    		g2.drawLine((int)edge.getX1(), height-(int)edge.getY1(), (int)edge.getX2(), height-(int)edge.getY2());
 	    	}
@@ -65,7 +75,7 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 	    
 	}
 	public void mouseClicked (MouseEvent me) {
-		
+
 		xpos = me.getX();
 		ypos = me.getY();
 		
@@ -75,6 +85,8 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 		inputPoints.add(tempvar);
 		Point2D.Double newPoint = new Point2D.Double(xpos,ypos);
 		dots.add(newPoint);
+//		Ellipse2D.Double circle = new Ellipse2D.Double(newPoint.getX(),newPoint.getY(),5,5);
+		//g2.fill(circle);
 		repaint();
 	
 	}
@@ -107,8 +119,15 @@ public class Canvas extends Applet implements MouseListener,ActionListener{
 			inputPoints.clear();
 			dots.clear();
 			edges.clear();
-			System.exit(0);
+			BeachLine.count=0;
+			GlobalVariable.eventIdCtr=-1;
+			GlobalVariable.beachLineIdCtr=-1;
+			GlobalVariable.vertexIdCtr = -1;
+			VoronoiMesh.heListRoot=null;
+			//edges = new ArrayList<Line2D.Double>(5);
 			repaint();
+			//System.exit(0);
+			//repaint();
 		}
 	}
 	

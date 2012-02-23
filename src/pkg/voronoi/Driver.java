@@ -51,7 +51,6 @@ public class Driver {
 			VoronoiMesh.cellInsert(newCell);
 		}
 	}
-	
 	private static void handleSiteEvent(EventQueue eventQ,BeachLine statusTree,EventQueueNode currEvent)
 	{
 		BeachLineLeafNode newArc = new BeachLineLeafNode(currEvent.getXycoord(),null);
